@@ -1,0 +1,73 @@
+
+
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					{{range .goodsNew}}
+						<li>
+							<a href="/goodsDetail?id={{.Id}}"><img src="http://192.168.100.9:8888/{{.Image}}"></a>
+							<h4><a href="/goodsDetail?id={{.Id}}">{{.Name}}</a></h4>
+							<div class="prize">￥{{.Price}}</div>
+						</li>
+					{{end}}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				{{if compare .sort ""}}
+					<a href="/goodsList?typeId={{$.typeId}}" class="active">默认</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=price">价格</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=sale">人气</a>
+				{{else if compare .sort "price"}}
+                    <a href="/goodsList?typeId={{$.typeId}}">默认</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=price" class="active">价格</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=sale">人气</a>
+				{{else}}
+                    <a href="/goodsList?typeId={{$.typeId}}">默认</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=price">价格</a>
+                    <a href="/goodsList?typeId={{$.typeId}}&sort=sale" class="active">人气</a>
+				{{end}}
+			</div>
+
+			<ul class="goods_type_list clearfix">
+
+				{{range .goods}}
+					<li>
+						<a href="/goodsDetail?id={{.Id}}"><img src="http://192.168.100.9:8888/{{.Image}}"></a>
+						<h4><a href="/goodsDetail?id={{.Id}}">{{.Name}}</a></h4>
+						<div class="operate">
+							<span class="prize">￥{{.Price}}</span>
+							<span class="unit">{{.Price}}/{{.Unite}}</span>
+							<a href="#" class="add_goods" title="加入购物车"></a>
+						</div>
+					</li>
+				{{end}}
+
+			</ul>
+
+			<div class="pagenation">
+				<a href="/goodsList?pageIndex={{.prePage}}&typeId={{.typeId}}&sort={{.sort}}">上一页</a>
+				{{range $index,$val := .pages}}
+					{{if compare $val $.pageIndex}}
+
+						<a href="/goodsList?pageIndex={{$val}}&typeId={{$.typeId}}&sort={{$.sort}}" class="active">{{$val}}</a>
+					{{else}}
+						<a href="/goodsList?pageIndex={{$val}}&typeId={{$.typeId}}&sort={{$.sort}}" >{{$val}}</a>
+					{{end}}
+
+				{{end}}
+				<a href="/goodsList?pageIndex={{.nextPage}}&typeId={{.typeId}}&sort={{.sort}}">下一页></a>
+			</div>
+		</div>
+	</div>
+

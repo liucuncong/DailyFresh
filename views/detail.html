@@ -1,0 +1,183 @@
+
+	<div class="breadcrumb">
+		<a href="#">全部分类</a>
+		<span>></span>
+		<a href="#">新鲜水果</a>
+		<span>></span>
+		<a href="#">商品详情</a>
+	</div>
+
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img src="http://192.168.100.9:8888/{{.goodsSKU.Image}}"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{.goodsSKU.Name}}</h3>
+			<p>{{.goodsSKU.Desc}}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">¥<em>{{.goodsSKU.Price}}</em></span>
+				<span class="show_unit">单  位：{{.goodsSKU.Unite}}</span>
+			</div>
+			<div class="goods_num clearfix">
+				<div class="num_name fl">数 量：</div>
+				<div class="num_add fl">
+
+
+					<input type="text" class="num_show fl" value="1">
+					<a href="javascript:;" class="add fr">+</a>
+					<a href="javascript:;" class="minus fr">-</a>
+
+
+				</div> 
+			</div>
+			<div class="total">总价：<em>16.80元</em></div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+				<a href="javascript:;" skuid="{{.goodsSKU.Id}}"  class="add_cart" id="add_cart">加入购物车</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					{{range .goodsNew}}
+						<li>
+							<a href="/goodsDetail?id={{.Id}}"><img src="http://192.168.100.9:8888/{{.Image}}"></a>
+							<h4><a href="/goodsDetail?id={{.Id}}">{{.Name}}</a></h4>
+							<div class="prize">￥{{.Price}}</div>
+						</li>
+					{{end}}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active">商品介绍</li>
+				<li>评论</li>
+			</ul>
+
+			<div class="tab_content">
+				<dl>
+					<dt>商品详情：</dt>
+					<dd>{{.goodsSKU.Goods.Detail}}</dd>
+				</dl>
+			</div>
+
+		</div>
+	</div>
+
+    <div class="add_jump"></div>
+
+	<script type="text/javascript" src="/static/js/jquery-1.12.4.min.js"></script>
+	<script type="text/javascript">
+        UpdateGoodsPrice()
+		function UpdateGoodsPrice() {
+			//获取单价和数量
+			price = $('.show_pirze').children('em').text()
+            count = $('.num_show').val()
+
+
+            price = parseFloat(price)
+            count = parseInt(count)
+
+			//得到的为float
+			total = price * count
+			//把总价更新
+			$('.total').children('em').text(total.toFixed(2)+'元')
+        }
+
+        //增加商品数量
+		$('.add').click(function () {
+            count = $('.num_show').val()
+            count = parseInt(count) + 1
+
+			//展示数量
+			$('.num_show').val(count)
+
+			//更新总价
+            UpdateGoodsPrice()
+        })
+
+		//减少商品数量
+        $('.minus').click(function () {
+            count = $('.num_show').val()
+            count = parseInt(count) - 1
+			if (count < 1) {
+			    count = 1
+			}
+
+            //展示数量
+            $('.num_show').val(count)
+
+            //更新总价
+            UpdateGoodsPrice()
+        })
+
+		//手动输入商品数量
+		$('.num_show').blur(function () {
+		    //拿到输入框的内容
+            count = $(this).val()
+			//对数据进行校验
+			if (isNaN(count) || count.trim().length == 0 || parseInt(count) < 1) {
+			    count = 1
+			}
+			//在页面显示
+            $(this).val(parseInt(count))
+			UpdateGoodsPrice()
+
+        })
+
+
+
+
+
+
+
+
+
+
+		var $add_x = $('#add_cart').offset().top;
+		var $add_y = $('#add_cart').offset().left;
+
+		var $to_x = $('#show_count').offset().top;
+		var $to_y = $('#show_count').offset().left;
+
+
+		$('#add_cart').click(function(){
+            $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})
+
+			//获取商品id
+            skuid = $('#add_cart').attr('skuid')
+			//获取加入购物车商品的数量
+            count = $('.num_show').val()
+			//拼接json字符串
+			param = {'skuid':skuid,'count':count}
+			//发送ajax请求
+		    $.post('/user/addCart',param,function (data) {
+				if (data.code == 5) {
+
+                    $(".add_jump").stop().animate({
+                                'left': $to_y+7,
+                                'top': $to_x+7},
+                            	"fast", function() {
+                                $(".add_jump").fadeOut('fast',function(){
+                                    $('#show_count').html(data.cartCount);
+                                });
+
+                    });
+				} else {
+				    alert(data)
+				}
+
+            })
+
+
+
+
+
+        })
+	</script>
+

@@ -1,0 +1,56 @@
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+                <li><a href="/user/userCenterInfo" >· 个人信息</a></li>
+                <li><a href="/user/userCenterOrder" class="active">· 全部订单</a></li>
+                <li><a href="/user/userCenterSite">· 收货地址</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<h3 class="common_title2">全部订单</h3>
+				{{range .goodsBuffer}}
+					<ul class="order_list_th w978 clearfix">
+						<li class="col01">{{.orderInfo.Time.Format "2006-01-02 15:04:05"}}</li>
+						<li class="col02">订单号：{{.orderInfo.OrderId}}</li>
+						<li class="col02 stress">{{if compare .orderInfo.Orderstatus 1}}未支付{{else}}已支付{{end}}</li>
+					</ul>
+
+					<table class="order_list_table w980">
+						<tbody>
+							<tr>
+								<td width="55%">
+									{{range .orderGoods}}
+										<ul class="order_goods_list clearfix">
+											<li class="col01"><img src="http://192.168.100.9:8888/{{.GoodsSKU.Image}}"></li>
+											<li class="col02">{{.GoodsSKU.Name}}<em>{{.GoodsSKU.Price}}元/{{.GoodsSKU.Unite}}</em></li>
+											<li class="col03">{{.Count}}</li>
+											<li class="col04">{{.Price}}元</li>
+										</ul>
+
+									{{end}}
+								</td>
+								<td width="15%">{{.orderInfo.TotalPrice}}元</td>
+								<td width="15%">{{if compare .orderInfo.Orderstatus 1}}未支付{{else}}已支付{{end}}</td>
+								<td width="15%">{{if compare .orderInfo.Orderstatus 1}}<a href="/user/pay?orderId={{.orderInfo.OrderId}}&&totalPrice={{.orderInfo.TotalPrice}}" class="oper_btn">去付款</a>{{else}}已支付{{end}}</td>
+							</tr>
+						</tbody>
+					</table>
+				{{end}}
+
+				<div class="pagenation">
+					<a href="/user/userCenterOrder?pageIndex={{.prePage}}">上一页</a>
+					{{range $index,$value := .pages}}
+						{{if compare $value $.pageIndex}}
+							<a href="/user/userCenterOrder?pageIndex={{$value}}" class="active">{{$value}}</a>
+						{{else}}
+                            <a href="/user/userCenterOrder?pageIndex={{$value}}" >{{$value}}</a>
+						{{end}}
+					{{end}}
+					<a href="/user/userCenterOrder?pageIndex={{.nextPage}}">下一页></a>
+				</div>
+
+
+		</div>
+	</div>
+
